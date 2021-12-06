@@ -1,0 +1,14 @@
+eu/ladeira/core/Logger.class
+eu/ladeira/core/modules/ScoreboardManager$1.class
+eu/ladeira/core/modules/DescriptorManager$PlayerDescriptor$Layer.class
+eu/ladeira/core/modules/DescriptorManager.class
+eu/ladeira/core/modules/ScoreboardManager.class
+eu/ladeira/core/modules/Alerts.class
+eu/ladeira/core/modules/ReputationManager.class
+eu/ladeira/core/LadeiraCore.class
+eu/ladeira/core/Database.class
+eu/ladeira/core/LadeiraModule.class
+eu/ladeira/core/modules/ReputationManager$1.class
+eu/ladeira/core/modules/DescriptorManager$PlayerDescriptor.class
+eu/ladeira/core/modules/DescriptorManager$1.class
+eu/ladeira/core/modules/SpawnManager.class
