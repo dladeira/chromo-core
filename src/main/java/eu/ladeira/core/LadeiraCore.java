@@ -29,13 +29,13 @@ public class LadeiraCore extends JavaPlugin {
 	}
 	
 	public Database db;
-	public Plugin plugin;
+	private Plugin plugin;
 	private ArrayList<LadeiraModule> modules;
 	
 	@Override
 	public void onEnable() {
 		plugin = this;
-		db = new Database();
+		db = new Database(this);
 		externalModules = new HashMap<>();
 		
 		modules = new ArrayList<>();

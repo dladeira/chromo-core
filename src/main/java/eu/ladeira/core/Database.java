@@ -10,6 +10,9 @@ import org.bson.types.ObjectId;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -28,7 +31,7 @@ public class Database {
 	private static Document serverSettings;
 
 
-	public Database() {
+	public Database(Plugin plugin) {
 		client = MongoClients.create(uri);
 		db = client.getDatabase("ladeira-core");
 		
@@ -41,6 +44,17 @@ public class Database {
 		}
 		
 		serverSettings = serverCollection.find().first();
+		
+		final Database database = this;
+		
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				for (Player online : Bukkit.getOnlinePlayers()) {
+					online.setPlayerListName(database.getName(online.getUniqueId()));;
+				}
+			}
+		}.runTaskTimer(plugin, 20, 20);
 	}
 	
 	public MongoDatabase getDB() {

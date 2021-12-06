@@ -35,14 +35,14 @@ public class Alerts implements LadeiraModule, Listener {
 	@EventHandler
 	public void broadcastPlayerJoin(PlayerJoinEvent e) {
 		Player player = e.getPlayer();
-		Bukkit.broadcastMessage(ChatColor.WHITE + player.getName() + ChatColor.GRAY + " has joined");
+		Bukkit.broadcastMessage(ChatColor.WHITE + db.getName(player.getUniqueId()) + ChatColor.GRAY + " has joined");
 		e.setJoinMessage("");
 	}
 	
 	@EventHandler
 	public void broadcastPlayerQuit(PlayerQuitEvent e) {
 		Player player = e.getPlayer();
-		Bukkit.broadcastMessage(ChatColor.WHITE + player.getName() + ChatColor.GRAY + " has left");
+		Bukkit.broadcastMessage(ChatColor.WHITE + db.getName(player.getUniqueId()) + ChatColor.GRAY + " has left");
 		e.setQuitMessage("");
 	}
 	
@@ -51,7 +51,7 @@ public class Alerts implements LadeiraModule, Listener {
 		Player player = e.getPlayer();
 		int rep = db.getPlayerInt(player.getUniqueId(), "reputation");
 		String repColor = ReputationManager.getReputationColor(rep);
-		String name = player.getName();
+		String name = db.getName(player.getUniqueId());
 		
 		if (LadeiraCore.hasExternalModule("LGuilds")) {
 			String guild = "";
@@ -65,9 +65,9 @@ public class Alerts implements LadeiraModule, Listener {
 			for (Player online : Bukkit.getOnlinePlayers()) {
 				Guild onlineGuild = Guild.getGuild(online.getUniqueId());
 				if (onlineGuild != null && guild.equals(onlineGuild.getName() + " ")) {
-					online.sendMessage(ChatColor.GREEN + guild + repColor + "[" + rep + "] " + db.getName(player.getUniqueId()) + ChatColor.GRAY + ": " + e.getMessage());
+					online.sendMessage(ChatColor.GREEN + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 				} else {
-					online.sendMessage(ChatColor.RED + guild + repColor + "[" + rep + "] " + db.getName(player.getUniqueId()) + ChatColor.GRAY + ": " + e.getMessage());
+					online.sendMessage(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 				}
 			}
 		} else {
