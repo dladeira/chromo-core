@@ -13,7 +13,7 @@ import org.bukkit.scoreboard.Scoreboard;
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraCore;
 import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.guilds.LGuilds;
+import eu.ladeira.guilds.SurvivalGuilds;
 import net.md_5.bungee.api.ChatColor;
 
 public class ScoreboardManager implements LadeiraModule {
@@ -62,8 +62,8 @@ public class ScoreboardManager implements LadeiraModule {
 					obj.getScore(ChatColor.WHITE + "Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size() + "/" + db.getTotalPlayerCount()).setScore(score--);
 					obj.getScore(ChatColor.RESET + "").setScore(score--);
 
-					if (LadeiraCore.hasExternalModule("LGuilds")) {
-						LGuilds guilds = (LGuilds) LadeiraCore.getExternalModule("LGuilds");
+					if (LadeiraCore.hasExternalModule("SurvivalGuilds")) {
+						SurvivalGuilds guilds = (SurvivalGuilds) LadeiraCore.getExternalModule("SurvivalGuilds");
 						score = guilds.addGuildToObjective(online, obj, score);
 					}
 

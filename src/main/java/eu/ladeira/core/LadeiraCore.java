@@ -18,7 +18,7 @@ import eu.ladeira.core.modules.SpawnManager;
 public class LadeiraCore extends JavaPlugin {
 	
 	private static HashMap<String, Plugin> externalModules;
-	private static String externalModuleList = "LGuilds";
+	private static String externalModuleList = "SurvivalGuilds";
 	
 	public static boolean hasExternalModule(String name) {
 		return externalModules.containsKey(name);

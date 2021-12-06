@@ -53,7 +53,7 @@ public class Alerts implements LadeiraModule, Listener {
 		String repColor = ReputationManager.getReputationColor(rep);
 		String name = db.getName(player.getUniqueId());
 		
-		if (LadeiraCore.hasExternalModule("LGuilds")) {
+		if (LadeiraCore.hasExternalModule("SurvivalGuilds")) {
 			String guild = "";
 			
 			Guild playerGuild = Guild.getGuild(player.getUniqueId());

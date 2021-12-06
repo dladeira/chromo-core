@@ -8,4 +8,5 @@ main: eu.ladeira.core.LadeiraCore
 
 commands:
   spawn:
-  rep:
+  reputation:
+    aliases: rep

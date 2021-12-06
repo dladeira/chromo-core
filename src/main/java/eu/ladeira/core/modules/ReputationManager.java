@@ -131,7 +131,7 @@ public class ReputationManager implements LadeiraModule, Listener, CommandExecut
 
 	@Override
 	public String cmdName() {
-		return "rep";
+		return "reputation";
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)
