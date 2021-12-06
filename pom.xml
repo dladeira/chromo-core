@@ -4,10 +4,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>eu.ladeira</groupId>
-	<artifactId>ladeiracore</artifactId>
+	<artifactId>ladeira-core</artifactId>
 	<version>1.0.0</version>
 	<repositories>
-		<!-- This adds the Spigot Maven repository to the build -->
+		<!-- Spigot Maven Repository -->
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -18,6 +18,7 @@
 
 	<dependencies>
 		<dependency>
+			<!-- MongoDB -->
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver-sync</artifactId>
 			<version>4.4.0</version>
@@ -25,6 +26,7 @@
 		</dependency>
 
 		<dependency>
+			<!-- Spigot Repository -->
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot</artifactId>
 			<version>1.18-R0.1-SNAPSHOT</version>
@@ -32,6 +34,7 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<!-- External Modules -->
 			<groupId>eu.ladeira</groupId>
 			<artifactId>lguilds</artifactId>
 			<version>1.0.0</version>
