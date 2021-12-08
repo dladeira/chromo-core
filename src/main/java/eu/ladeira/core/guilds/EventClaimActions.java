@@ -3,6 +3,7 @@ package eu.ladeira.core.guilds;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -106,9 +107,16 @@ public class EventClaimActions implements Listener {
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void entityInteract(EntityDamageByEntityEvent e) {
+		Player player = null;
 		if (e.getDamager() instanceof Player) {
-			Player player = (Player) e.getDamager();
-
+			player = (Player) e.getDamager();
+		} else if (e.getDamager() instanceof Projectile) {
+			if (((Projectile) e.getDamager()).getShooter() instanceof Player) {
+				player = (Player) ((Projectile) e.getDamager()).getShooter();
+			}
+		}
+		
+		if (player != null) {
 			if (CmdGuild.isOverriding(player)) {
 				return;
 			}
@@ -118,6 +126,10 @@ public class EventClaimActions implements Listener {
 				Chunk chunk = damaged.getLocation().getChunk();
 				Guild chunkGuild = GuildModule.getGuild(chunk);
 
+				if (e.getEntity() instanceof Monster) {
+					return;
+				}
+				
 				if (chunkGuild != null) {
 					e.setCancelled(!chunkGuild.hasMember(player.getUniqueId()));
 				}
@@ -177,10 +189,10 @@ public class EventClaimActions implements Listener {
 		if (!(e.getRemover() instanceof Player)) {
 			return;
 		}
-		
+
 		Player player = (Player) e.getRemover();
 		Guild chunkGuild = GuildModule.getGuild(e.getEntity().getLocation().getChunk());
-		
+
 		if (CmdGuild.isOverriding(player)) {
 			return;
 		}
