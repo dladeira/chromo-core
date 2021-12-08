@@ -1,7 +1,6 @@
 package eu.ladeira.core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandExecutor;
@@ -9,41 +8,40 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import eu.ladeira.core.modules.Alerts;
-import eu.ladeira.core.modules.DescriptorManager;
-import eu.ladeira.core.modules.ReputationManager;
-import eu.ladeira.core.modules.ScoreboardManager;
+import eu.ladeira.core.modules.AlertsModule;
+import eu.ladeira.core.modules.DescriptorModule;
+import eu.ladeira.core.modules.GuildModule;
+import eu.ladeira.core.modules.ReputationModule;
+import eu.ladeira.core.modules.ScoreboardModule;
 import eu.ladeira.core.modules.SpawnManager;
 
-public class LadeiraCore extends JavaPlugin {
+public class Chromo extends JavaPlugin {
 	
-	private static HashMap<String, Plugin> externalModules;
-	private static String externalModuleList = "SurvivalGuilds";
+	private static Plugin plugin;
+	private static Database db;
 	
-	public static boolean hasExternalModule(String name) {
-		return externalModules.containsKey(name);
+	public static Plugin getPlugin() {
+		return plugin;
 	}
 	
-	public static Plugin getExternalModule(String name) {
-		return externalModules.get(name);
+	public static Database getDatabase() {
+		return db;
 	}
 	
-	public Database db;
-	private Plugin plugin;
 	private ArrayList<LadeiraModule> modules;
 	
 	@Override
 	public void onEnable() {
 		plugin = this;
 		db = new Database(this);
-		externalModules = new HashMap<>();
 		
 		modules = new ArrayList<>();
 		modules.add(new SpawnManager(db));
-		modules.add(new ScoreboardManager(db, plugin));
-		modules.add(new DescriptorManager(db, plugin));
-		modules.add(new ReputationManager(db, plugin));
-		modules.add(new Alerts(db));
+		modules.add(new ScoreboardModule(db, plugin));
+		modules.add(new DescriptorModule(db, plugin));
+		modules.add(new ReputationModule(db, plugin));
+		modules.add(new AlertsModule(db));
+		modules.add(new GuildModule());
 		
 		for (LadeiraModule module : modules) {
 			if (module instanceof Listener) {
@@ -52,13 +50,6 @@ public class LadeiraCore extends JavaPlugin {
 			
 			if (module instanceof CommandExecutor) {
 				getCommand(module.cmdName()).setExecutor((CommandExecutor) module); 
-			}
-		}
-		
-		for (String pluginName : externalModuleList.split(":")) {
-			Plugin plugin = Bukkit.getPluginManager().getPlugin(pluginName);
-			if (plugin != null) {
-				externalModules.put(pluginName, plugin);
 			}
 		}
 	}
@@ -70,6 +61,7 @@ public class LadeiraCore extends JavaPlugin {
 		}
 		
 		plugin = null;
+		db = null;
 	}
 	
 	public void registerEvents(Listener... listeners) {

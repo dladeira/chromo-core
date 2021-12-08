@@ -24,18 +24,17 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import eu.ladeira.core.Database;
-import eu.ladeira.core.LadeiraCore;
 import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.guilds.Guild;
+import eu.ladeira.core.modules.GuildModule.Guild;
 import net.md_5.bungee.api.ChatColor;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 
-public class DescriptorManager implements LadeiraModule, Listener {
+public class DescriptorModule implements LadeiraModule, Listener {
 
 	public HashMap<Player, PlayerDescriptor> descriptors;
 	private Database db;
 
-	public DescriptorManager(final Database db, Plugin plugin) {
+	public DescriptorModule(final Database db, Plugin plugin) {
 		this.db = db;
 		descriptors = new HashMap<>();
 
@@ -50,14 +49,12 @@ public class DescriptorManager implements LadeiraModule, Listener {
 					PlayerDescriptor descriptor = descriptors.get(online);
 
 					int reputation = db.getPlayerInt(online.getUniqueId(), "reputation");
-					descriptor.setText(1, ChatColor.GRAY + "Rep: " + ReputationManager.getReputationColor(reputation) + reputation);
-					if (LadeiraCore.hasExternalModule("LGuilds")) {
-						Guild playerGuild = Guild.getGuild(online.getUniqueId());
-						if (playerGuild != null) {
-							descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + playerGuild.getName());
-						} else {
-							descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + "NONE");
-						}
+					descriptor.setText(1, ChatColor.GRAY + "Rep: " + ReputationModule.getReputationColor(reputation) + reputation);
+					Guild playerGuild = GuildModule.getGuild(online.getUniqueId());
+					if (playerGuild != null) {
+						descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + playerGuild.getName());
+					} else {
+						descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + "NONE");
 					}
 
 					Material standingIn = online.getWorld().getBlockAt(online.getLocation()).getType();

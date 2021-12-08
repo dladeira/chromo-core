@@ -19,10 +19,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
 import eu.ladeira.core.Logger;
-import eu.ladeira.guilds.Guild;
+import eu.ladeira.core.modules.GuildModule.Guild;
 import net.md_5.bungee.api.ChatColor;
 
-public class ReputationManager implements LadeiraModule, Listener, CommandExecutor {
+public class ReputationModule implements LadeiraModule, Listener, CommandExecutor {
 
 	public static String getReputationColor(int reputation) {
 		if (reputation >= 10) {
@@ -44,7 +44,7 @@ public class ReputationManager implements LadeiraModule, Listener, CommandExecut
 	private HashMap<UUID, HashMap<UUID, Integer>> attackedList = new HashMap<>();
 	private int combatTimer = 30;
 
-	public ReputationManager(Database db, Plugin plugin) {
+	public ReputationModule(Database db, Plugin plugin) {
 		this.db = db;
 
 		new BukkitRunnable() {
@@ -186,7 +186,7 @@ public class ReputationManager implements LadeiraModule, Listener, CommandExecut
 			db.setPlayer(killerUUID, "reputation", db.getPlayerInt(killerUUID, "reputation") - 2);
 			killer.sendMessage(ChatColor.WHITE + "-2 rep" + ChatColor.GRAY + " reputation (killed a player with +10 rep)");
 
-			Guild killerGuild = Guild.getGuild(killerUUID);
+			Guild killerGuild = GuildModule.getGuild(killerUUID);
 			if (killerGuild != null) {
 				for (UUID memberUUID : killerGuild.getMembers()) {
 					if (!memberUUID.equals(killerUUID)) {
@@ -208,8 +208,8 @@ public class ReputationManager implements LadeiraModule, Listener, CommandExecut
 			killer.sendMessage(ChatColor.WHITE + "+1 rep" + ChatColor.GRAY + " reputation (defended yourself)");
 		}
 
-		Guild killerGuild = Guild.getGuild(killerUUID);
-		Guild killedGuild = Guild.getGuild(killedUUID);
+		Guild killerGuild = GuildModule.getGuild(killerUUID);
+		Guild killedGuild = GuildModule.getGuild(killedUUID);
 
 		if (killerGuild != null) {
 			killerGuild.updateChunks();

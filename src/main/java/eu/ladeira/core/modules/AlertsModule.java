@@ -9,20 +9,19 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.ladeira.core.Database;
-import eu.ladeira.core.LadeiraCore;
 import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.guilds.Guild;
+import eu.ladeira.core.modules.GuildModule.Guild;
 import net.md_5.bungee.api.ChatColor;
 
 @SuppressWarnings("deprecation")
-public class Alerts implements LadeiraModule, Listener {
+public class AlertsModule implements LadeiraModule, Listener {
 
 	private Database db;
-	
-	public Alerts(Database db) {
+
+	public AlertsModule(Database db) {
 		this.db = db;
 	}
-	
+
 	@Override
 	public void onDisable() {
 	}
@@ -38,40 +37,36 @@ public class Alerts implements LadeiraModule, Listener {
 		Bukkit.broadcastMessage(ChatColor.WHITE + db.getName(player.getUniqueId()) + ChatColor.GRAY + " has joined");
 		e.setJoinMessage("");
 	}
-	
+
 	@EventHandler
 	public void broadcastPlayerQuit(PlayerQuitEvent e) {
 		Player player = e.getPlayer();
 		Bukkit.broadcastMessage(ChatColor.WHITE + db.getName(player.getUniqueId()) + ChatColor.GRAY + " has left");
 		e.setQuitMessage("");
 	}
-	
+
 	@EventHandler
 	public void displayPlayerInfoChat(PlayerChatEvent e) {
 		Player player = e.getPlayer();
 		int rep = db.getPlayerInt(player.getUniqueId(), "reputation");
-		String repColor = ReputationManager.getReputationColor(rep);
+		String repColor = ReputationModule.getReputationColor(rep);
 		String name = db.getName(player.getUniqueId());
-		
-		if (LadeiraCore.hasExternalModule("SurvivalGuilds")) {
-			String guild = "";
-			
-			Guild playerGuild = Guild.getGuild(player.getUniqueId());
-			
-			if (playerGuild != null) {
-				guild = playerGuild.getName() + " ";
+
+		String guild = "";
+
+		Guild playerGuild = GuildModule.getGuild(player.getUniqueId());
+
+		if (playerGuild != null) {
+			guild = playerGuild.getName() + " ";
+		}
+
+		for (Player online : Bukkit.getOnlinePlayers()) {
+			Guild onlineGuild = GuildModule.getGuild(online.getUniqueId());
+			if (onlineGuild != null && guild.equals(onlineGuild.getName() + " ")) {
+				online.sendMessage(ChatColor.GREEN + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
+			} else {
+				online.sendMessage(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 			}
-			
-			for (Player online : Bukkit.getOnlinePlayers()) {
-				Guild onlineGuild = Guild.getGuild(online.getUniqueId());
-				if (onlineGuild != null && guild.equals(onlineGuild.getName() + " ")) {
-					online.sendMessage(ChatColor.GREEN + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
-				} else {
-					online.sendMessage(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
-				}
-			}
-		} else {
-			Bukkit.broadcastMessage(repColor + "[" + rep + "] " + db.getName(player.getUniqueId()) + ChatColor.GRAY + ": " + e.getMessage());
 		}
 
 		e.setCancelled(true);

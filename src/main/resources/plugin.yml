@@ -1,12 +1,14 @@
-name: LadeiraCore
+name: ChromoCore
 author: Chr0mosom3
 version: 1.0
 api-version: 1.17
 website: ladeira.eu
 
-main: eu.ladeira.core.LadeiraCore
+main: eu.ladeira.core.Chromo
 
 commands:
   spawn:
   reputation:
     aliases: rep
+  guild:
+    aliases: g

@@ -10,18 +10,18 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
+import eu.ladeira.core.Chromo;
 import eu.ladeira.core.Database;
-import eu.ladeira.core.LadeiraCore;
 import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.guilds.SurvivalGuilds;
+import eu.ladeira.core.modules.GuildModule.Guild;
 import net.md_5.bungee.api.ChatColor;
 
-public class ScoreboardManager implements LadeiraModule {
+public class ScoreboardModule implements LadeiraModule {
 
 	Plugin plugin;
 	Database db;
 
-	public ScoreboardManager(Database db, Plugin plugin) {
+	public ScoreboardModule(Database db, Plugin plugin) {
 		this.db = db;
 		this.plugin = plugin;
 
@@ -30,7 +30,6 @@ public class ScoreboardManager implements LadeiraModule {
 
 	@Override
 	public void onDisable() {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -57,19 +56,51 @@ public class ScoreboardManager implements LadeiraModule {
 
 					obj.getScore("").setScore(score--);
 					obj.getScore(ChatColor.WHITE + "Username: " + ChatColor.GRAY + online.getName()).setScore(score--);
-					obj.getScore(ChatColor.WHITE + "Reputation: " + ChatColor.GRAY + ReputationManager.getReputationColor(reputation) + reputation).setScore(score--);
+					obj.getScore(ChatColor.WHITE + "Reputation: " + ChatColor.GRAY + ReputationModule.getReputationColor(reputation) + reputation).setScore(score--);
 					obj.getScore(ChatColor.WHITE + "Playtime: " + ChatColor.GRAY + playtime + "h").setScore(score--);
 					obj.getScore(ChatColor.WHITE + "Online: " + ChatColor.GRAY + Bukkit.getOnlinePlayers().size() + "/" + db.getTotalPlayerCount()).setScore(score--);
 					obj.getScore(ChatColor.RESET + "").setScore(score--);
 
-					if (LadeiraCore.hasExternalModule("SurvivalGuilds")) {
-						SurvivalGuilds guilds = (SurvivalGuilds) LadeiraCore.getExternalModule("SurvivalGuilds");
-						score = guilds.addGuildToObjective(online, obj, score);
-					}
+					score = addGuildsToObjective(online, obj, score);
 
 					online.setScoreboard(board);
 				}
 			}
 		}.runTaskTimer(plugin, 20, 20);
+	}
+
+	public int addGuildsToObjective(Player online, Objective obj, int score) {
+		Guild guild = GuildModule.getGuild(online.getUniqueId());
+		// Guild information
+		if (guild != null) {
+			obj.getScore(ChatColor.GRAY + "-- " + ChatColor.RED + guild.getName()).setScore(score--);
+
+			// Display members
+			for (int x = 0; x < guild.getMaxMembers(); x++) {
+				if (guild.getMembers().size() > x) {
+					UUID memberUUID = guild.getMembers().get(x);
+					int reputation = Chromo.getDatabase().getPlayerInt(memberUUID, "reputation");
+					String memberString = Chromo.getDatabase().getName(memberUUID) + ChatColor.GRAY + " (" + ReputationModule.getReputationColor(reputation) + reputation + ChatColor.GRAY + ")";
+
+					if (Bukkit.getPlayer(memberUUID) != null) {
+						memberString = ChatColor.GREEN + " • " + memberString;
+					} else {
+						memberString = ChatColor.RED + " • " + memberString;
+					}
+					obj.getScore(memberString).setScore(score--);
+				} else {
+					obj.getScore(ChatColor.GRAY + " • " + "Empty " + x).setScore(score--);
+				}
+
+			}
+
+			obj.getScore(ChatColor.RESET + "" + ChatColor.RESET).setScore(score--);
+			obj.getScore(ChatColor.WHITE + "Chunks: " + ChatColor.GRAY + guild.getChunks().size() + "/" + guild.getMaxChunks()).setScore(score--);
+			obj.getScore(ChatColor.WHITE + "Territories: " + ChatColor.GRAY + guild.getTerritories() + "/" + guild.getMaxTerritories()).setScore(score--);
+		} else {
+			obj.getScore(ChatColor.GRAY + "-- No guild").setScore(score--);
+		}
+
+		return score;
 	}
 }

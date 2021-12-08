@@ -2,6 +2,8 @@ package eu.ladeira.core;
 
 import static com.mongodb.client.model.Filters.eq;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,8 +19,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
+import eu.ladeira.core.modules.GuildModule;
+import eu.ladeira.core.modules.GuildModule.Guild;
 import net.md_5.bungee.api.ChatColor;
 
 public class Database {
@@ -28,15 +33,17 @@ public class Database {
 	private static MongoDatabase db;
 	private static MongoCollection<Document> playerCollection;
 	private static MongoCollection<Document> serverCollection;
+	private static MongoCollection<Document> guildCollection;
 	private static Document serverSettings;
 
 
 	public Database(Plugin plugin) {
 		client = MongoClients.create(uri);
-		db = client.getDatabase("ladeira-core");
+		db = client.getDatabase("chromo-core");
 		
 		playerCollection = db.getCollection("players");
 		serverCollection = db.getCollection("server");
+		guildCollection = db.getCollection("guilds");
 		
 		// If server settings don't exist create them
 		if (serverCollection.countDocuments() < 1) {
@@ -55,6 +62,8 @@ public class Database {
 				}
 			}
 		}.runTaskTimer(plugin, 20, 20);
+		
+		loadGuilds();
 	}
 	
 	public MongoDatabase getDB() {
@@ -153,5 +162,65 @@ public class Database {
 		String world = rawLocation[5];
 
 		return new Location(Bukkit.getWorld(world), x, y, z, yaw, pitch);
+	}
+	
+	/*
+	 * Guild Module
+	 */
+	
+	public void loadGuilds() {
+		MongoCursor<Document> cursor = guildCollection.find().iterator();
+
+		while (cursor.hasNext()) {
+			Document guildDoc = cursor.next();
+
+			String name = guildDoc.getString("name");
+			UUID leader = UUID.fromString(guildDoc.getString("leader"));
+			ArrayList<String> rawMembers = new ArrayList<>(guildDoc.getList("members", String.class));
+			ArrayList<UUID> members = new ArrayList<>();
+			LinkedList<String> chunks = new LinkedList<String>(guildDoc.getList("chunks", String.class));
+
+			for (String rawMember : rawMembers) {
+				members.add(UUID.fromString(rawMember));
+			}
+
+			GuildModule.addGuild((new Guild(name, leader, members, chunks)));
+		}
+
+		cursor.close();
+		
+		
+		// Chunk restrictions
+		ArrayList<String> claimLocked = (ArrayList<String>) getSettingList("claimLocked");
+		ArrayList<String> serverClaimed = (ArrayList<String>) getSettingList("serverClaimed");
+
+		if (claimLocked != null)
+			GuildModule.getClaimLocked().addAll(claimLocked);
+		
+		if (serverClaimed != null)
+			GuildModule.getServerClaimed().addAll(serverClaimed);
+	}
+
+	public void saveGuilds() {
+		guildCollection.deleteMany(new Document());
+
+		for (Guild guild : GuildModule.getGuilds()) {
+			Document guildDoc = new Document("name", guild.getName());
+			guildDoc.append("leader", guild.getLeader().toString());
+
+			ArrayList<String> rawMembers = new ArrayList<>();
+			for (UUID member : guild.getMembers()) {
+				rawMembers.add(member.toString());
+			}
+
+			guildDoc.append("members", rawMembers);
+			guildDoc.append("chunks", guild.getChunks());
+
+			guildCollection.insertOne(guildDoc);
+		}
+		
+		// Chunk restrictions
+		setSetting("claimLocked", GuildModule.getClaimLocked());
+		setSetting("serverClaimed", GuildModule.getServerClaimed());
 	}
 }
