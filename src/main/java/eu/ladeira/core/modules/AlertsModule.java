@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
+import eu.ladeira.core.Logger;
 import eu.ladeira.core.guilds.Guild;
 import eu.ladeira.core.guilds.GuildModule;
 import net.md_5.bungee.api.ChatColor;
@@ -59,6 +60,7 @@ public class AlertsModule extends LadeiraModule implements Listener {
 			} else {
 				online.sendMessage(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 			}
+			Logger.sendInfo(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 		}
 
 		e.setCancelled(true);
