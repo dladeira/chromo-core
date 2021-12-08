@@ -9,19 +9,17 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import eu.ladeira.core.modules.GuildModule;
-import eu.ladeira.core.modules.GuildModule.Guild;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class ClaimMapSendEvent implements Listener {
+public class EventSendMap implements Listener {
 
 	private static ArrayList<UUID> mapUpdate = new ArrayList<>();
-	private GuildCmd guildCmd;
+	private CmdGuild guildCmd;
 
-	public ClaimMapSendEvent(GuildCmd guildCmd) {
-		this.guildCmd = guildCmd;
+	public EventSendMap() {
+		this.guildCmd = new CmdGuild();
 	}
 
 	@EventHandler

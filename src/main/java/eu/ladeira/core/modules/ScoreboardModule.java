@@ -13,10 +13,11 @@ import org.bukkit.scoreboard.Scoreboard;
 import eu.ladeira.core.Chromo;
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.core.modules.GuildModule.Guild;
+import eu.ladeira.core.guilds.Guild;
+import eu.ladeira.core.guilds.GuildModule;
 import net.md_5.bungee.api.ChatColor;
 
-public class ScoreboardModule implements LadeiraModule {
+public class ScoreboardModule extends LadeiraModule {
 
 	Plugin plugin;
 	Database db;
@@ -26,15 +27,6 @@ public class ScoreboardModule implements LadeiraModule {
 		this.plugin = plugin;
 
 		startRunnable();
-	}
-
-	@Override
-	public void onDisable() {
-	}
-
-	@Override
-	public String cmdName() {
-		return null;
 	}
 
 	public void startRunnable() {

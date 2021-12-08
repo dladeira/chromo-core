@@ -10,25 +10,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.core.modules.GuildModule.Guild;
+import eu.ladeira.core.guilds.Guild;
+import eu.ladeira.core.guilds.GuildModule;
 import net.md_5.bungee.api.ChatColor;
 
 @SuppressWarnings("deprecation")
-public class AlertsModule implements LadeiraModule, Listener {
+public class AlertsModule extends LadeiraModule implements Listener {
 
 	private Database db;
 
 	public AlertsModule(Database db) {
 		this.db = db;
-	}
-
-	@Override
-	public void onDisable() {
-	}
-
-	@Override
-	public String cmdName() {
-		return null;
 	}
 
 	@EventHandler

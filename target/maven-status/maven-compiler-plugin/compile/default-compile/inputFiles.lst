@@ -1,3 +1,4 @@
+/home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/guilds/GuildModule.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/modules/SpawnManager.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/guilds/ClaimMapSendEvent.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/modules/ScoreboardModule.java
@@ -6,7 +7,6 @@
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/Database.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/modules/AlertsModule.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/Logger.java
-/home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/modules/GuildModule.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/modules/DescriptorModule.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/Chromo.java
 /home/daniel/Documents/chromo-core/src/main/java/eu/ladeira/core/modules/ReputationModule.java

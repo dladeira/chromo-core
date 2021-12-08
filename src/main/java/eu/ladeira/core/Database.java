@@ -22,8 +22,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 
-import eu.ladeira.core.modules.GuildModule;
-import eu.ladeira.core.modules.GuildModule.Guild;
+import eu.ladeira.core.guilds.Guild;
+import eu.ladeira.core.guilds.GuildModule;
 import net.md_5.bungee.api.ChatColor;
 
 public class Database {

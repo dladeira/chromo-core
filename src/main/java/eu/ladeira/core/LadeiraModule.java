@@ -1,7 +1,25 @@
 package eu.ladeira.core;
 
-public interface LadeiraModule {
+import java.util.ArrayList;
 
-	public void onDisable();
-	public String cmdName();
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.event.Listener;
+
+public class LadeiraModule {
+
+	public void onDisable() {
+
+	}
+
+	public CommandExecutor getExecutor() {
+		return null;
+	}
+
+	public String getCmdName() {
+		return null;
+	}
+
+	public ArrayList<Listener> getListeners() {
+		return new ArrayList<Listener>();
+	}
 }

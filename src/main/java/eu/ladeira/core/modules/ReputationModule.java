@@ -19,10 +19,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
 import eu.ladeira.core.Logger;
-import eu.ladeira.core.modules.GuildModule.Guild;
+import eu.ladeira.core.guilds.Guild;
+import eu.ladeira.core.guilds.GuildModule;
 import net.md_5.bungee.api.ChatColor;
 
-public class ReputationModule implements LadeiraModule, Listener, CommandExecutor {
+public class ReputationModule extends LadeiraModule implements Listener, CommandExecutor {
 
 	public static String getReputationColor(int reputation) {
 		if (reputation >= 10) {
@@ -125,13 +126,13 @@ public class ReputationModule implements LadeiraModule, Listener, CommandExecuto
 	}
 
 	@Override
-	public void onDisable() {
-
-	}
-
-	@Override
-	public String cmdName() {
+	public String getCmdName() {
 		return "reputation";
+	}
+	
+	@Override
+	public CommandExecutor getExecutor() {
+		return this;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

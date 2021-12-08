@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -25,11 +26,11 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.core.modules.GuildModule.Guild;
-import net.md_5.bungee.api.ChatColor;
+import eu.ladeira.core.guilds.Guild;
+import eu.ladeira.core.guilds.GuildModule;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 
-public class DescriptorModule implements LadeiraModule, Listener {
+public class DescriptorModule extends LadeiraModule implements Listener {
 
 	public HashMap<Player, PlayerDescriptor> descriptors;
 	private Database db;
@@ -63,26 +64,21 @@ public class DescriptorModule implements LadeiraModule, Listener {
 						online.eject();
 					} else {
 						if (online.getPassengers().size() < 1 && online.getHealth() > 0 && online.getGameMode() != GameMode.SPECTATOR) {
+							
 							descriptor.reload();
 						}
 					}
-
 					descriptor.removeForPlayer(online);
 				}
 			}
 		}.runTaskTimer(plugin, 10, 10);
 	}
-
 	@Override
 	public void onDisable() {
 		for (Player online : descriptors.keySet()) {
+			System.out.println("disabling thing");
 			descriptors.get(online).remove();
 		}
-	}
-
-	@Override
-	public String cmdName() {
-		return null;
 	}
 
 	@EventHandler

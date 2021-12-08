@@ -8,9 +8,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import eu.ladeira.core.guilds.GuildModule;
 import eu.ladeira.core.modules.AlertsModule;
 import eu.ladeira.core.modules.DescriptorModule;
-import eu.ladeira.core.modules.GuildModule;
 import eu.ladeira.core.modules.ReputationModule;
 import eu.ladeira.core.modules.ScoreboardModule;
 import eu.ladeira.core.modules.SpawnManager;
@@ -48,8 +48,12 @@ public class Chromo extends JavaPlugin {
 				registerEvents((Listener) module);
 			}
 			
-			if (module instanceof CommandExecutor) {
-				getCommand(module.cmdName()).setExecutor((CommandExecutor) module); 
+			for (Listener listener : module.getListeners()) {
+				registerEvents(listener);
+			}
+			
+			if (module.getExecutor() != null) {
+				getCommand(module.getCmdName()).setExecutor((CommandExecutor) module.getExecutor()); 
 			}
 		}
 	}

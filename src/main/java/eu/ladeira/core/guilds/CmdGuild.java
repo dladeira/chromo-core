@@ -12,18 +12,15 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import eu.ladeira.core.LadeiraModule;
-import eu.ladeira.core.modules.GuildModule;
-import eu.ladeira.core.modules.GuildModule.Guild;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
-public class GuildCmd implements LadeiraModule, CommandExecutor {
+public class CmdGuild implements CommandExecutor {
 	
 	private static ArrayList<UUID> override;
 
-	public GuildCmd() {
+	public CmdGuild() {
 		override = new ArrayList<>();
 	}
 
@@ -304,11 +301,11 @@ public class GuildCmd implements LadeiraModule, CommandExecutor {
 
 			switch (arg) {
 			case "on":
-				ClaimMapSendEvent.addMapUpdate(player);
+				EventSendMap.addMapUpdate(player);
 				player.sendMessage(ChatColor.GRAY + "Enabling automatic map display");
 				return;
 			case "off":
-				ClaimMapSendEvent.removeMapUpdate(player);
+				EventSendMap.removeMapUpdate(player);
 				player.sendMessage(ChatColor.GRAY + "Disabling automatic map display");
 				return;
 			default:
@@ -714,15 +711,5 @@ public class GuildCmd implements LadeiraModule, CommandExecutor {
 
 	public static boolean isOverriding(Player player) {
 		return override.contains(player.getUniqueId());
-	}
-
-	@Override
-	public void onDisable() {
-		override = null;
-	}
-
-	@Override
-	public String cmdName() {
-		return "guild";
 	}
 }

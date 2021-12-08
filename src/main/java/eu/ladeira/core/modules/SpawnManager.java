@@ -16,7 +16,7 @@ import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
 import eu.ladeira.core.Logger;
 
-public class SpawnManager implements Listener, CommandExecutor, LadeiraModule {
+public class SpawnManager extends LadeiraModule implements Listener, CommandExecutor {
 
 	private Database db;
 	private Location location;
