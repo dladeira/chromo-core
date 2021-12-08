@@ -45,6 +45,16 @@ public class ReputationModule extends LadeiraModule implements Listener, Command
 	private HashMap<UUID, HashMap<UUID, Integer>> attackedList = new HashMap<>();
 	private int combatTimer = 30;
 
+	@Override
+	public String getCmdName() {
+		return "reputation";
+	}
+	
+	@Override
+	public CommandExecutor getExecutor() {
+		return this;
+	}
+	
 	public ReputationModule(Database db, Plugin plugin) {
 		this.db = db;
 
@@ -123,16 +133,6 @@ public class ReputationModule extends LadeiraModule implements Listener, Command
 			Logger.sendInfo("Changed " + target.getName() + "'s reputation to " + db.getPlayerInt(targetUUID, "reputation"));
 			return true;
 		}
-	}
-
-	@Override
-	public String getCmdName() {
-		return "reputation";
-	}
-	
-	@Override
-	public CommandExecutor getExecutor() {
-		return this;
 	}
 
 	@EventHandler(priority = EventPriority.MONITOR)

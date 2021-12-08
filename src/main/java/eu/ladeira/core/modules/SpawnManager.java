@@ -26,14 +26,21 @@ public class SpawnManager extends LadeiraModule implements Listener, CommandExec
 		this.db = db;
 	}
 
+	@Override
 	public void onDisable() {
 		if (location != null) {
 			db.setSetting("spawn", Database.serialize(location));
 		}
 	}
 	
-	public String cmdName() {
+	@Override
+	public String getCmdName() {
 		return "spawn";
+	}
+	
+	@Override
+	public CommandExecutor getExecutor() {
+		return this;
 	}
 
 	@Override
