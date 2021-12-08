@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Chunk;
+import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.Listener;
 
 import eu.ladeira.core.Chromo;
@@ -30,10 +31,16 @@ public class GuildModule extends LadeiraModule implements Listener {
 	}
 	
 	@Override
+	public CommandExecutor getExecutor() {
+		return new CmdGuild();
+	}
+	
+	@Override
 	public ArrayList<Listener> getListeners() {
 		ArrayList<Listener> listeners = new ArrayList<>();
 		
 		listeners.add(new EventSendMap());
+		listeners.add(new EventClaimActions());
 		
 		return listeners;
 	}

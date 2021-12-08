@@ -76,7 +76,6 @@ public class DescriptorModule extends LadeiraModule implements Listener {
 	@Override
 	public void onDisable() {
 		for (Player online : descriptors.keySet()) {
-			System.out.println("disabling thing");
 			descriptors.get(online).remove();
 		}
 	}
