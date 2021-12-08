@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -159,7 +160,7 @@ public class ReputationModule extends LadeiraModule implements Listener, Command
 					attackedList.get(attacked.getUniqueId()).put(attacker.getUniqueId(), combatTimer);
 				}
 
-				if (attacked.getHealth() - e.getFinalDamage() <= 0 && !attacked.isBlocking()) {
+				if (attacked.getHealth() - e.getFinalDamage() <= 0 && !attacked.isBlocking() && !isHoldingTotemOfUndying(attacked)) {
 					changeReputation(attacker, attacked, attackedList.get(attacker.getUniqueId()).containsKey(attacked.getUniqueId()));
 
 					if (attackedList.get(attacker.getUniqueId()).containsKey(attacked.getUniqueId())) {
@@ -219,5 +220,9 @@ public class ReputationModule extends LadeiraModule implements Listener, Command
 		if (killedGuild != null) {
 			killedGuild.updateChunks();
 		}
+	}
+	
+	public boolean isHoldingTotemOfUndying(Player player) {
+		return player.getInventory().getItemInMainHand().getType().equals(Material.TOTEM_OF_UNDYING) || player.getInventory().getItemInOffHand().getType().equals(Material.TOTEM_OF_UNDYING);
 	}
 }
