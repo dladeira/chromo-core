@@ -60,8 +60,8 @@ public class AlertsModule extends LadeiraModule implements Listener {
 			} else {
 				online.sendMessage(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 			}
-			Logger.sendInfo(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 		}
+		Logger.sendInfo(ChatColor.RED + guild + repColor + "[" + rep + "] " + name + ChatColor.GRAY + ": " + e.getMessage());
 
 		e.setCancelled(true);
 	}
