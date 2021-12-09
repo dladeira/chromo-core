@@ -78,12 +78,14 @@ public class EventClaimActions implements Listener {
 
 		Guild chunkGuild = GuildModule.getGuild(e.getClickedBlock().getLocation().getChunk());
 
-		if (chunkGuild != null && !(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player))) {
-			e.setCancelled(true);
-		}
+		if (e.getMaterial().isInteractable()) {
+			if (chunkGuild != null && !(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player))) {
+				e.setCancelled(true);
+			}
 
-		if (GuildModule.isServerClaimed(player.getLocation().getChunk())) {
-			e.setCancelled(true);
+			if (GuildModule.isServerClaimed(player.getLocation().getChunk())) {
+				e.setCancelled(true);
+			}
 		}
 	}
 
@@ -115,7 +117,7 @@ public class EventClaimActions implements Listener {
 				player = (Player) ((Projectile) e.getDamager()).getShooter();
 			}
 		}
-		
+
 		if (player != null) {
 			if (CmdGuild.isOverriding(player)) {
 				return;
@@ -129,7 +131,7 @@ public class EventClaimActions implements Listener {
 				if (e.getEntity() instanceof Monster) {
 					return;
 				}
-				
+
 				if (chunkGuild != null) {
 					e.setCancelled(!(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player)));
 				}
@@ -186,11 +188,15 @@ public class EventClaimActions implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onHangingBreak(HangingBreakByEntityEvent e) {
-		if (!(e.getRemover() instanceof Player)) {
+		Player player;
+		if (e.getRemover() instanceof Player) {
+			player = (Player) e.getRemover();
+		} else if (e.getRemover() instanceof Projectile && ((Projectile) e.getRemover()).getShooter() instanceof Player) {
+			player = (Player) ((Projectile) e.getRemover()).getShooter();
+		} else {
 			return;
 		}
 
-		Player player = (Player) e.getRemover();
 		Guild chunkGuild = GuildModule.getGuild(e.getEntity().getLocation().getChunk());
 
 		if (CmdGuild.isOverriding(player)) {
