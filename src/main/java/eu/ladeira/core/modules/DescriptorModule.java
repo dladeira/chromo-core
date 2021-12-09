@@ -49,30 +49,37 @@ public class DescriptorModule extends LadeiraModule implements Listener {
 				for (Player online : descriptors.keySet()) {
 					PlayerDescriptor descriptor = descriptors.get(online);
 
-					int reputation = db.getPlayerInt(online.getUniqueId(), "reputation");
-					descriptor.setText(1, ChatColor.GRAY + "Rep: " + ReputationModule.getReputationColor(reputation) + reputation);
-					Guild playerGuild = GuildModule.getGuild(online.getUniqueId());
-					if (playerGuild != null) {
-						descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + playerGuild.getName());
-					} else {
-						descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + "NONE");
-					}
-
-					Material standingIn = online.getWorld().getBlockAt(online.getLocation()).getType();
-
-					if (standingIn.equals(Material.NETHER_PORTAL) || standingIn.equals(Material.END_PORTAL)) {
-						online.eject();
-					} else {
-						if (online.getPassengers().size() < 1 && online.getHealth() > 0 && online.getGameMode() != GameMode.SPECTATOR) {
-							
-							descriptor.reload();
+					if (!online.getGameMode().equals(GameMode.SPECTATOR)) {
+						int reputation = db.getPlayerInt(online.getUniqueId(), "reputation");
+						descriptor.setText(0, db.getName(online.getUniqueId()));
+						descriptor.setText(1, ChatColor.GRAY + "Rep: " + ReputationModule.getReputationColor(reputation) + reputation);
+						Guild playerGuild = GuildModule.getGuild(online.getUniqueId());
+						if (playerGuild != null) {
+							descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + playerGuild.getName());
+						} else {
+							descriptor.setText(2, ChatColor.GRAY + "Guild: " + ChatColor.WHITE + "NONE");
 						}
+
+						Material standingIn = online.getWorld().getBlockAt(online.getLocation()).getType();
+
+						if (standingIn.equals(Material.NETHER_PORTAL) || standingIn.equals(Material.END_PORTAL)) {
+							online.eject();
+						} else {
+							if (online.getPassengers().size() < 1 && online.getHealth() > 0) {
+
+								descriptor.reload();
+							}
+						}
+					} else {
+						descriptors.get(online).removeEntities();
 					}
 					descriptor.removeForPlayer(online);
 				}
 			}
 		}.runTaskTimer(plugin, 10, 10);
+
 	}
+
 	@Override
 	public void onDisable() {
 		for (Player online : descriptors.keySet()) {
