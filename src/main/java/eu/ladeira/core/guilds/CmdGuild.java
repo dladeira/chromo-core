@@ -640,6 +640,11 @@ public class CmdGuild implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + "ERROR: This chunk is already claim locked");
 			return;
 		}
+		
+		if (GuildModule.getGuild(chunk) != null) {
+			player.sendMessage(ChatColor.RED + "ERROR: This chunk is already claimed");
+			return;
+		}
 
 		player.sendMessage(ChatColor.GRAY + "Claim locked chunk at " + ChatColor.WHITE + rawChunk);
 		GuildModule.addClaimLocked(rawChunk);
