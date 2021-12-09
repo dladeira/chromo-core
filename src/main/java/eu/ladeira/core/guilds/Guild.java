@@ -20,8 +20,11 @@ public class Guild {
 	private int invitationDuration = 120;
 	private UUID leader;
 	private ArrayList<UUID> members;
+	private ArrayList<Integer> allies;
 	private HashMap<UUID, Integer> invitations = new HashMap<>();
+	private HashMap<Integer, Integer> allyInvitations = new HashMap<>();
 	private LinkedList<String> chunks = new LinkedList<>();
+	private int uuid;
 
 	// SERVER ONLY
 	public Guild(String name) {
@@ -30,16 +33,18 @@ public class Guild {
 	}
 
 	public Guild(String name, UUID leader) {
-		this(name, leader, new ArrayList<UUID>(), new LinkedList<String>());
+		this(name, leader, GuildModule.getId(), new ArrayList<UUID>(), new LinkedList<String>(), new ArrayList<Integer>());
 
 		this.addMember(leader);
 	}
 
-	public Guild(String name, UUID leader, ArrayList<UUID> members, LinkedList<String> chunks) {
+	public Guild(String name, UUID leader, int id, ArrayList<UUID> members, LinkedList<String> chunks, ArrayList<Integer> allies) {
 		this.name = name;
 		this.leader = leader;
 		this.members = members;
 		this.chunks = chunks;
+		this.allies = allies;
+		this.uuid = id;
 
 		new BukkitRunnable() {
 			@Override
@@ -51,14 +56,27 @@ public class Guild {
 						newMap.put(invitee, --time);
 					}
 				}
+				
+				HashMap<Integer, Integer> newAllyMap = new HashMap<>();
+				for (Integer invitee : allyInvitations.keySet()) {
+					int time = allyInvitations.get(invitee);
+					if (time > 0) {
+						newAllyMap.put(invitee, --time);
+					}
+				}
 
 				invitations = newMap;
+				allyInvitations = newAllyMap;
 			}
 		}.runTaskTimer(Chromo.getPlugin(), 20, 20);
 	}
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public int getId() {
+		return this.uuid;
 	}
 
 	public boolean rename(String name) {
@@ -337,5 +355,65 @@ public class Guild {
 			}
 		}
 		return size;
+	}
+	
+	public void allyGuild(int id) {
+		this.allies.add(id);
+	}
+	
+	public void enemyGuild(int id) {
+		int enemyIndex = -1;
+		
+		int index = 0;
+		for (int guildId : allies) {
+			if (id == guildId) {
+				enemyIndex = index;
+			}
+			index++;
+		}
+		
+		if (enemyIndex >= 0) {
+			this.allies.remove(enemyIndex);
+		}
+	}
+	
+	public boolean isAlly(int id) {
+		return this.allies.contains(id);
+	}
+	
+	public int allyCount() {
+		return this.allies.size();
+	}
+	
+	public void inviteAlly(Guild guild) {
+		allyInvitations.put(guild.getId(), invitationDuration);
+	}
+	
+	public boolean isAllyInvited(Guild guild) {
+		for (int id : allyInvitations.keySet()) {
+			if (guild.getId() == id) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public ArrayList<Integer> getAllies() {
+		return this.allies;
+	}
+	
+	public boolean isAllied(Player player) {
+		Guild playerGuild = GuildModule.getGuild(player.getUniqueId());
+		
+		if (playerGuild == null) {
+			return false;
+		}
+		
+		if (isAlly(playerGuild.getId())) {
+			return true;
+		}
+		
+		return false;
 	}
 }

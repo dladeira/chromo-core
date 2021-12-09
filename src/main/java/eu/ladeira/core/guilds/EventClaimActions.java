@@ -78,7 +78,7 @@ public class EventClaimActions implements Listener {
 
 		Guild chunkGuild = GuildModule.getGuild(e.getClickedBlock().getLocation().getChunk());
 
-		if (chunkGuild != null && !chunkGuild.hasMember(player.getUniqueId())) {
+		if (chunkGuild != null && !(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player))) {
 			e.setCancelled(true);
 		}
 
@@ -96,7 +96,7 @@ public class EventClaimActions implements Listener {
 			return;
 		}
 
-		if (chunkGuild != null && !chunkGuild.hasMember(player.getUniqueId())) {
+		if (chunkGuild != null && !(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player))) {
 			e.setCancelled(true);
 		}
 
@@ -131,13 +131,13 @@ public class EventClaimActions implements Listener {
 				}
 				
 				if (chunkGuild != null) {
-					e.setCancelled(!chunkGuild.hasMember(player.getUniqueId()));
+					e.setCancelled(!(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player)));
 				}
 			}
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.LOW)
 	public void onBucketEmpty(PlayerBucketEmptyEvent e) {
 		Player player = e.getPlayer();
 		Location location = e.getBlock().getLocation();
@@ -152,12 +152,12 @@ public class EventClaimActions implements Listener {
 			e.setCancelled(true);
 		}
 
-		if (chunkGuild != null && !chunkGuild.hasMember(player.getUniqueId())) {
+		if (chunkGuild != null && !(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player))) {
 			e.setCancelled(true);
 		}
 	}
 
-	@EventHandler(priority = EventPriority.HIGH)
+	@EventHandler(priority = EventPriority.LOW)
 	public void onBlockForm(BlockFormEvent e) {
 		Location location = e.getBlock().getLocation();
 
@@ -198,7 +198,7 @@ public class EventClaimActions implements Listener {
 		}
 
 		if (chunkGuild != null) {
-			e.setCancelled(!chunkGuild.hasMember(player.getUniqueId()));
+			e.setCancelled(!(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player)));
 		}
 	}
 }
