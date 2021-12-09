@@ -83,8 +83,20 @@ public class CmdGuild implements CommandExecutor {
 			case "serverunclaim":
 				serverUnclaim(player);
 				break;
+			case "ally":
+				ally(player, args);
+				break;
+			case "allyaccept":
+				allyAccept(player, args);
+				break;
+			case "enemy":
+				enemy(player, args);
+				break;
 			case "override":
 				override(player);
+				break;
+			case "id":
+				player.sendMessage(GuildModule.getGuild(player.getUniqueId()).getId() + "");
 				break;
 			default:
 				player.sendMessage(ChatColor.RED + "ERROR: Invalid option " + ChatColor.WHITE + args[0]);
@@ -711,5 +723,138 @@ public class CmdGuild implements CommandExecutor {
 
 	public static boolean isOverriding(Player player) {
 		return override.contains(player.getUniqueId());
+	}
+	
+	public void ally(Player player, String[] args) {
+		UUID uuid = player.getUniqueId();
+		Guild playerGuild = GuildModule.getGuild(uuid);
+		
+		if (playerGuild == null) {
+			player.sendMessage(ChatColor.RED + "ERROR: Not currently in a guild");
+		}
+		String guildName = "";
+		int argIndex = 0;
+		for (String arg : args) {
+			if (argIndex++ < 1) {
+				continue;
+			}
+
+			guildName += arg;
+
+			if (argIndex < args.length) {
+				guildName += " ";
+			}
+		}
+
+		Guild guild = GuildModule.getGuild(guildName);
+
+		if (guild == null) {
+			player.sendMessage(ChatColor.RED + "ERROR: This guild does not exist");
+			return;
+		}
+		
+		if (guild.getId() == playerGuild.getId()) {
+			player.sendMessage(ChatColor.RED + "ERROR: You can't ally yourself");
+			return;
+		}
+		
+		player.sendMessage(ChatColor.GRAY + "Sent an invitation to the guild leader");
+		playerGuild.inviteAlly(guild);
+		Player leader = Bukkit.getPlayer(guild.getLeader());
+		if (leader != null) {
+			TextComponent invitation = new TextComponent(ChatColor.GRAY + "Your guild has recieved a ally invitation from " + ChatColor.WHITE + playerGuild.getName() + ChatColor.GRAY + ", you have 120 seconds to accept");
+			TextComponent accept = new TextComponent(ChatColor.GREEN + "" + ChatColor.BOLD + "[ACCEPT]");
+			accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/guild allyaccept " + playerGuild.getName()));
+
+			leader.spigot().sendMessage(invitation, new TextComponent(" "), accept);
+		}
+	}
+	
+	public void enemy(Player player, String[] args) {
+		UUID uuid = player.getUniqueId();
+		Guild playerGuild = GuildModule.getGuild(uuid);
+		
+		if (playerGuild == null) {
+			player.sendMessage(ChatColor.RED + "ERROR: Not currently in a guild");
+		}
+		String guildName = "";
+		int argIndex = 0;
+		for (String arg : args) {
+			if (argIndex++ < 1) {
+				continue;
+			}
+
+			guildName += arg;
+
+			if (argIndex < args.length) {
+				guildName += " ";
+			}
+		}
+
+		Guild guild = GuildModule.getGuild(guildName);
+
+		if (guild == null) {
+			player.sendMessage(ChatColor.RED + "ERROR: This guild does not exist");
+			return;
+		}
+		
+		if (guild.getId() == playerGuild.getId()) {
+			player.sendMessage(ChatColor.RED + "ERROR: You can't enemy yourself");
+			return;
+		}
+		
+		if (!playerGuild.isAlly(guild.getId())) {
+			player.sendMessage(ChatColor.RED + "ERROR: This guild is not allied");
+			return;
+		}
+		
+		playerGuild.broadcast(ChatColor.LIGHT_PURPLE + "IMPORTANT -- You are now enemies with " + ChatColor.WHITE + guildName);
+		guild.broadcast(ChatColor.LIGHT_PURPLE + "IMPORTANT -- You are now enemies with " + ChatColor.WHITE + playerGuild.getName());
+		guild.enemyGuild(playerGuild.getId());
+		playerGuild.enemyGuild(guild.getId());
+	}
+	
+	public void allyAccept(Player player, String[] args) {
+		UUID uuid = player.getUniqueId();
+		Guild playerGuild = GuildModule.getGuild(uuid);
+		
+		if (playerGuild == null) {
+			player.sendMessage(ChatColor.RED + "ERROR: Not currently in a guild");
+		}
+		String guildName = "";
+		int argIndex = 0;
+		for (String arg : args) {
+			if (argIndex++ < 1) {
+				continue;
+			}
+
+			guildName += arg;
+
+			if (argIndex < args.length) {
+				guildName += " ";
+			}
+		}
+
+		Guild guild = GuildModule.getGuild(guildName);
+
+		if (guild == null) {
+			player.sendMessage(ChatColor.RED + "ERROR: This guild does not exist");
+			return;
+		}
+		
+		if (!guild.isAllyInvited(playerGuild)) {
+			player.sendMessage(ChatColor.RED + "ERROR: This guild has not sent you an ally invitation");
+			return;
+		}
+		
+		if (guild.isAlly(playerGuild.getId())) {
+			player.sendMessage(ChatColor.RED + "ERROR: This guild is already an ally");
+			return;
+		}
+		
+		playerGuild.broadcast(ChatColor.LIGHT_PURPLE + "IMPORTANT -- You are now allies with " + ChatColor.WHITE + guildName);
+		guild.broadcast(ChatColor.LIGHT_PURPLE + "IMPORTANT -- You are now allies with " + ChatColor.WHITE + playerGuild.getName());
+		guild.allyGuild(playerGuild.getId());
+		playerGuild.allyGuild(guild.getId());
 	}
 }

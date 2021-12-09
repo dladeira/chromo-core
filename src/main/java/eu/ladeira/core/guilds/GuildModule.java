@@ -130,6 +130,33 @@ public class GuildModule extends LadeiraModule implements Listener {
 
 		return null;
 	}
+	
+	public static Guild getGuild(int id) {
+		for (Guild guild : guilds) {
+			if (guild.getId() == id) {
+				return guild;
+			}
+		}
+
+		return null;
+	}
+	
+	public static int getId() {
+		for (int i = 0; i < 1000; i++) {
+			boolean foundNumber = false;
+			for (Guild guild : guilds) {
+				if (guild.getId() == i) {
+					foundNumber = true;
+				}
+			}
+			
+			if (!foundNumber) {
+				return i;
+			}
+		}
+		System.out.println("no numbers lmao");
+		return 0;
+	}
 
 	public static Guild getGuild(String name) {
 		for (Guild guild : guilds) {

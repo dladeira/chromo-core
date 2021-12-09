@@ -85,6 +85,17 @@ public class ScoreboardModule extends LadeiraModule {
 				}
 
 			}
+			
+			obj.getScore(ChatColor.RESET + "" + ChatColor.RESET + "" + ChatColor.RESET).setScore(score--);
+			
+			if (guild.allyCount() > 0) {
+				obj.getScore(ChatColor.GRAY + "-- " + ChatColor.GOLD + "Allies").setScore(score--);
+				for (int x : guild.getAllies()) {
+					obj.getScore(ChatColor.GRAY + " • " + GuildModule.getGuild(x).getName()).setScore(score--);
+				}
+			} else {
+				obj.getScore(ChatColor.GRAY + "-- No Allies :(").setScore(score--);
+			}
 
 			obj.getScore(ChatColor.RESET + "" + ChatColor.RESET).setScore(score--);
 			obj.getScore(ChatColor.WHITE + "Chunks: " + ChatColor.GRAY + guild.getChunks().size() + "/" + guild.getMaxChunks()).setScore(score--);
