@@ -1,6 +1,5 @@
 package eu.ladeira.core.guilds;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -12,16 +11,18 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import eu.ladeira.core.Chromo;
+import eu.ladeira.core.modules.PermissionModule;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 public class CmdGuild implements CommandExecutor {
 	
-	private static ArrayList<UUID> override;
+	private PermissionModule perms;
 
 	public CmdGuild() {
-		override = new ArrayList<>();
+		this.perms = (PermissionModule) Chromo.getModule(PermissionModule.class);
 	}
 
 	@Override
@@ -177,7 +178,7 @@ public class CmdGuild implements CommandExecutor {
 
 		if (!guild.isLeader(player.getUniqueId())) {
 			player.sendMessage(ChatColor.RED + "ERROR: You are not the guild leader");
-			if (override.contains(player.getUniqueId())) {
+			if (perms.isOverriding(player.getUniqueId())) {
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Overriden");
 			} else {
 				return;
@@ -221,7 +222,7 @@ public class CmdGuild implements CommandExecutor {
 		if (!guild.isLeader(player.getUniqueId())) {
 			player.sendMessage(ChatColor.RED + "ERROR: You are not the team leader");
 
-			if (override.contains(player.getUniqueId())) {
+			if (perms.isOverriding(player.getUniqueId())) {
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Overriden");
 			} else {
 				return;
@@ -369,7 +370,7 @@ public class CmdGuild implements CommandExecutor {
 
 		if (!guild.isLeader(uuid)) {
 			player.sendMessage(ChatColor.RED + "ERROR: You are not the team leader");
-			if (override.contains(player.getUniqueId())) {
+			if (perms.isOverriding(player.getUniqueId())) {
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Overriden");
 			} else {
 				return;
@@ -402,7 +403,7 @@ public class CmdGuild implements CommandExecutor {
 
 		if (guild.getMembers().size() >= guild.getMaxMembers()) {
 			player.sendMessage(ChatColor.RED + "ERROR: Max team size reached (" + guild.getMaxMembers() + ")");
-			if (override.contains(player.getUniqueId())) {
+			if (perms.isOverriding(player.getUniqueId())) {
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Overriden");
 			} else {
 				return;
@@ -465,7 +466,7 @@ public class CmdGuild implements CommandExecutor {
 
 		if (!guild.isInvited(uuid)) {
 			player.sendMessage(ChatColor.RED + "ERROR: You are not invited to this guild!");
-			if (override.contains(player.getUniqueId())) {
+			if (perms.isOverriding(player.getUniqueId())) {
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Overriden");
 			} else {
 				return;
@@ -507,7 +508,7 @@ public class CmdGuild implements CommandExecutor {
 
 		if (!guild.isLeader(uuid)) {
 			player.sendMessage(ChatColor.RED + "ERROR: You are not the guild leader");
-			if (override.contains(player.getUniqueId())) {
+			if (perms.isOverriding(player.getUniqueId())) {
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Overriden");
 			} else {
 				return;
@@ -586,7 +587,7 @@ public class CmdGuild implements CommandExecutor {
 
 		if (enemyChunkGuild != null) {
 			player.sendMessage(ChatColor.RED + "ERROR: Chunk within two chunks of " + ChatColor.WHITE + enemyChunkGuild.getName());
-			if (override.contains(player.getUniqueId())) {
+			if (perms.isOverriding(player.getUniqueId())) {
 				player.sendMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "Overriden");
 			} else {
 				return;
@@ -715,19 +716,15 @@ public class CmdGuild implements CommandExecutor {
 			player.sendMessage(ChatColor.RED + "ERROR: Missing permissions");
 		}
 
-		if (override.contains(uuid)) {
+		if (perms.isOverriding(uuid)) {
 			player.sendMessage(ChatColor.GRAY + "No longer overriding");
-			override.remove(uuid);
+			perms.removeOverriding(uuid);
 			return;
 		}
 
 		player.sendMessage(ChatColor.GRAY + "Overriding restrictions");
-		override.add(uuid);
+		perms.addOverrding(uuid);
 		return;
-	}
-
-	public static boolean isOverriding(Player player) {
-		return override.contains(player.getUniqueId());
 	}
 	
 	public void ally(Player player, String[] args) {

@@ -111,6 +111,16 @@ public class GuildModule extends LadeiraModule implements Listener {
 		for (Guild guild : guilds) {
 			if (guild.getName().equals(delGuild.getName())) {
 				index = guilds.indexOf(guild);
+				
+				ArrayList<Integer> allies = new ArrayList<>();
+				for (int ally : guild.getAllies()) {
+					allies.add(ally);
+				}
+				
+				for (int ally : allies) {
+					GuildModule.getGuild(ally).enemyGuild(guild.getId());
+					guild.enemyGuild(ally);
+				}
 			}
 		}
 
