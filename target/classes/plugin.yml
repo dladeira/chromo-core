@@ -12,3 +12,5 @@ commands:
     aliases: rep
   guild:
     aliases: g
+  endlock:
+    aliases: el

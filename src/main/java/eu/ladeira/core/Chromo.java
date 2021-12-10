@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import eu.ladeira.core.guilds.GuildModule;
+import eu.ladeira.core.guilds.endlock.EndLockModule;
 import eu.ladeira.core.modules.AlertsModule;
 import eu.ladeira.core.modules.DescriptorModule;
 import eu.ladeira.core.modules.PermissionModule;
@@ -53,6 +54,7 @@ public class Chromo extends JavaPlugin {
 		modules.add(new AlertsModule(db));
 		modules.add(new GuildModule());
 		modules.add(new PermissionModule());
+		modules.add(new EndLockModule(db, plugin));
 		
 		for (LadeiraModule module : modules) {
 			if (module instanceof Listener) {

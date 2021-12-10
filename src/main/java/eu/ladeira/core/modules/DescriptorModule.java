@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftArmorStand;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.craftbukkit.v1_18_R1.entity.CraftSilverfish;
@@ -24,10 +25,12 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import eu.ladeira.core.Chromo;
 import eu.ladeira.core.Database;
 import eu.ladeira.core.LadeiraModule;
 import eu.ladeira.core.guilds.Guild;
 import eu.ladeira.core.guilds.GuildModule;
+import eu.ladeira.core.guilds.endlock.EndLockModule;
 import net.minecraft.network.protocol.game.PacketPlayOutEntityDestroy;
 
 public class DescriptorModule extends LadeiraModule implements Listener {
@@ -61,6 +64,15 @@ public class DescriptorModule extends LadeiraModule implements Listener {
 						}
 
 						Material standingIn = online.getWorld().getBlockAt(online.getLocation()).getType();
+
+						for (int y = -2; y <= 2; y++) {
+							Block block = online.getWorld().getBlockAt(online.getLocation().add(new Location(online.getWorld(), 0, y, 0)));
+							
+							if (block.getType().equals(Material.END_PORTAL)) {
+								online.eject();
+								online.teleport(((EndLockModule) Chromo.getModule(EndLockModule.class)).getEndLocation());
+							}
+						}
 
 						if (standingIn.equals(Material.NETHER_PORTAL) || standingIn.equals(Material.END_PORTAL)) {
 							online.eject();
