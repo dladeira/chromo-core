@@ -62,8 +62,6 @@ public class Database {
 				}
 			}
 		}.runTaskTimer(plugin, 20, 20);
-
-		loadGuilds();
 	}
 
 	public MongoDatabase getDB() {

@@ -30,6 +30,8 @@ public class Guild {
 	public Guild(String name) {
 		this.name = name;
 		this.members = new ArrayList<UUID>();
+		this.allies = new ArrayList<Integer>();
+		this.chunks = new LinkedList<String>();
 	}
 
 	public Guild(String name, UUID leader) {

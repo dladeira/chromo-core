@@ -24,6 +24,10 @@ public class PermissionModule extends LadeiraModule {
 	public boolean canAttackEntity(Player player, Entity entity) {
 		UUID playerUUID = player.getUniqueId();
 		
+		if (overriding.contains(player.getUniqueId())) {
+			return true;
+		}
+		
 		if (entity instanceof Player) {
 			Player attacked = (Player) entity;
 			Guild playerGuild = GuildModule.getGuild(playerUUID);
