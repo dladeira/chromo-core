@@ -11,6 +11,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import eu.ladeira.core.guilds.GuildModule;
 import eu.ladeira.core.modules.AlertsModule;
 import eu.ladeira.core.modules.DescriptorModule;
+import eu.ladeira.core.modules.PermissionModule;
 import eu.ladeira.core.modules.ReputationModule;
 import eu.ladeira.core.modules.ScoreboardModule;
 import eu.ladeira.core.modules.SpawnManager;
@@ -19,6 +20,7 @@ public class Chromo extends JavaPlugin {
 	
 	private static Plugin plugin;
 	private static Database db;
+	private static ArrayList<LadeiraModule> modules;
 	
 	public static Plugin getPlugin() {
 		return plugin;
@@ -28,7 +30,15 @@ public class Chromo extends JavaPlugin {
 		return db;
 	}
 	
-	private ArrayList<LadeiraModule> modules;
+	public static LadeiraModule getModule(Class<?> moduleType) {
+		for (LadeiraModule module : modules) {
+			if (module.getClass().isAssignableFrom(moduleType)) {
+				return module;
+			}
+		}
+		
+		return null;
+	}
 	
 	@Override
 	public void onEnable() {
@@ -42,6 +52,7 @@ public class Chromo extends JavaPlugin {
 		modules.add(new ReputationModule(db, plugin));
 		modules.add(new AlertsModule(db));
 		modules.add(new GuildModule());
+		modules.add(new PermissionModule());
 		
 		for (LadeiraModule module : modules) {
 			if (module instanceof Listener) {

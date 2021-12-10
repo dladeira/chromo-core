@@ -8,6 +8,7 @@ eu/ladeira/core/modules/ScoreboardModule$1.class
 eu/ladeira/core/modules/DescriptorModule$PlayerDescriptor.class
 eu/ladeira/core/modules/ScoreboardModule.class
 eu/ladeira/core/modules/DescriptorModule$PlayerDescriptor$Layer.class
+eu/ladeira/core/modules/PermissionModule.class
 eu/ladeira/core/Database.class
 eu/ladeira/core/LadeiraModule.class
 eu/ladeira/core/guilds/CmdGuild.class
