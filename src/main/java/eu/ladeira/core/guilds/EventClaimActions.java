@@ -1,9 +1,7 @@
 package eu.ladeira.core.guilds;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
@@ -16,6 +14,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
+import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -32,7 +31,7 @@ public class EventClaimActions implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOWEST)
-	public void playerAttackMember(EntityDamageByEntityEvent e) {
+	public void playerAttackEntity(EntityDamageByEntityEvent e) {
 			Player attacker = null;
 			
 			if (e.getDamager() instanceof Player) {
@@ -44,91 +43,78 @@ public class EventClaimActions implements Listener {
 			}
 			
 			if (attacker != null) {
-				perms.canAttackEntity(attacker, e.getEntity());
+				e.setCancelled(!perms.canAttackEntity(attacker, e.getEntity()));
 			}
 	}
 
-	@EventHandler(priority = EventPriority.LOW)
+	@EventHandler(priority = EventPriority.LOWEST)
 	public void interactEvent(PlayerInteractEvent e) {
 		Player player = e.getPlayer();
 
 		if (e.getClickedBlock() == null) { // Hit the air
 			return;
 		}
-
+		
+		Material mainHand = player.getInventory().getItemInMainHand().getType();
+		if (mainHand.isBlock() || mainHand.equals(Material.ARMOR_STAND) || mainHand.name().toLowerCase().contains("shulker")) {
+			if (!perms.canModifyTerrain(player, e.getClickedBlock().getLocation())) {
+				e.setCancelled(true);
+				return;
+			}
+		}
+		
 		if (e.getClickedBlock().getType().isInteractable()) { // Interacted with a door
-			e.setCancelled(!perms.canInteract(player, e.getClickedBlock()));
+			if (!perms.canInteract(player, e.getClickedBlock().getLocation())) {
+				e.setCancelled(true);
+				return;
+			}
 		}
 	}
 
+	@EventHandler(priority = EventPriority.LOW)
 	public void blockPlaceEvent(BlockPlaceEvent e) {
 		e.setCancelled(!perms.canModifyTerrain(e.getPlayer(), e.getBlock().getLocation()));
 	}
 
+	@EventHandler(priority = EventPriority.LOW)
 	public void blockBreakEvent(BlockBreakEvent e) {
 		e.setCancelled(!perms.canModifyTerrain(e.getPlayer(), e.getBlock().getLocation()));
 	}
-
+	
 	@EventHandler(priority = EventPriority.LOW)
-	public void entityInteract(PlayerInteractAtEntityEvent e) {
-		Player player = e.getPlayer();
-		Guild chunkGuild = GuildModule.getGuild(e.getRightClicked().getLocation().getChunk());
-
-		if (chunkGuild != null && !(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player))) {
-			e.setCancelled(true);
+	public void onHangingPlace(HangingPlaceEvent e) {
+		e.setCancelled(!perms.canModifyTerrain(e.getPlayer(), e.getBlock().getLocation()));
+	}
+	
+	@EventHandler(priority = EventPriority.LOW)
+	public void onHangingBreak(HangingBreakByEntityEvent e) {
+		Player attacker = null;
+		
+		if (e.getRemover() instanceof Player) {
+			attacker = (Player) e.getRemover(); 
+		} else if (e.getRemover() instanceof Projectile) {
+			if (((Projectile) e.getRemover()).getShooter() instanceof Player) {
+				attacker = (Player) ((Projectile) e.getRemover()).getShooter();
+			}
 		}
-
-		if (GuildModule.isServerClaimed(player.getLocation().getChunk())) {
-			e.setCancelled(true);
+		
+		if (attacker != null) {
+			e.setCancelled(!perms.canAttackEntity(attacker, e.getEntity()));
 		}
 	}
-
+	
 	@EventHandler(priority = EventPriority.LOW)
-	public void entityInteract(EntityDamageByEntityEvent e) {
-		Player player = null;
-		if (e.getDamager() instanceof Player) {
-			player = (Player) e.getDamager();
-		} else if (e.getDamager() instanceof Projectile) {
-			if (((Projectile) e.getDamager()).getShooter() instanceof Player) {
-				player = (Player) ((Projectile) e.getDamager()).getShooter();
-			}
-		}
-
-		if (player != null) {
-
-			if (!(e.getEntity() instanceof Player)) {
-				Entity damaged = e.getEntity();
-				Chunk chunk = damaged.getLocation().getChunk();
-				Guild chunkGuild = GuildModule.getGuild(chunk);
-
-				if (e.getEntity() instanceof Monster) {
-					return;
-				}
-
-				if (chunkGuild != null) {
-					e.setCancelled(!(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player)));
-				}
-			}
-		}
+	public void entityInteract(PlayerInteractAtEntityEvent e) {
+		e.setCancelled(!perms.canInteract(e.getPlayer(), e.getRightClicked().getLocation()));
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void onBucketEmpty(PlayerBucketEmptyEvent e) {
-		Player player = e.getPlayer();
-		Location location = e.getBlock().getLocation();
-		Chunk chunk = location.getChunk();
-		Guild chunkGuild = GuildModule.getGuild(chunk);
-
-
-		if (GuildModule.isServerClaimed(chunk)) {
-			e.setCancelled(true);
-		}
-
-		if (chunkGuild != null && !(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player))) {
-			e.setCancelled(true);
-		}
+		e.setCancelled(!perms.canModifyTerrain(e.getPlayer(), e.getBlock().getLocation()));
 	}
 
+	// PREVENT GRIEFING
+	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onBlockForm(BlockFormEvent e) {
 		Location location = e.getBlock().getLocation();
@@ -153,24 +139,6 @@ public class EventClaimActions implements Listener {
 
 		if (GuildModule.getGuild(location.getChunk()) != null) {
 			e.setCancelled(true);
-		}
-	}
-
-	@EventHandler(priority = EventPriority.HIGH)
-	public void onHangingBreak(HangingBreakByEntityEvent e) {
-		Player player;
-		if (e.getRemover() instanceof Player) {
-			player = (Player) e.getRemover();
-		} else if (e.getRemover() instanceof Projectile && ((Projectile) e.getRemover()).getShooter() instanceof Player) {
-			player = (Player) ((Projectile) e.getRemover()).getShooter();
-		} else {
-			return;
-		}
-
-		Guild chunkGuild = GuildModule.getGuild(e.getEntity().getLocation().getChunk());
-
-		if (chunkGuild != null) {
-			e.setCancelled(!(chunkGuild.hasMember(player.getUniqueId()) || chunkGuild.isAllied(player)));
 		}
 	}
 }

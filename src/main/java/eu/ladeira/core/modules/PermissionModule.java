@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
@@ -24,6 +23,7 @@ public class PermissionModule extends LadeiraModule {
 	
 	public boolean canAttackEntity(Player player, Entity entity) {
 		UUID playerUUID = player.getUniqueId();
+		
 		if (entity instanceof Player) {
 			Player attacked = (Player) entity;
 			Guild playerGuild = GuildModule.getGuild(playerUUID);
@@ -33,12 +33,18 @@ public class PermissionModule extends LadeiraModule {
 					return false;
 				}
 			}
+			
+			return true;
 		}
 		
 		if (!(entity instanceof Monster)) {
 			Guild entityGuild = GuildModule.getGuild(entity.getLocation().getChunk());
 			if (entityGuild != null) {
 				if (entityGuild.hasMember(playerUUID)) {
+					return true;
+				}
+				
+				if (entityGuild.isAllied(player)) {
 					return true;
 				}
 				
@@ -72,8 +78,8 @@ public class PermissionModule extends LadeiraModule {
 		return true;
 	}
 	
-	public boolean canInteract(Player player, Block block) {
-		return canModifyTerrain(player, block.getLocation());
+	public boolean canInteract(Player player, Location location) {
+		return canModifyTerrain(player, location);
 	}
 	
 	public ArrayList<UUID> getOverriding() {
