@@ -4,7 +4,10 @@ version: 1.0
 api-version: 1.17
 website: ladeira.eu
 
-main: eu.ladeira.core.Chromo
+main: eu.ladeira.chromo.Chromo
+
+libraries:
+- org.mongodb:mongodb-driver-sync:4.4.0
 
 commands:
   spawn:
