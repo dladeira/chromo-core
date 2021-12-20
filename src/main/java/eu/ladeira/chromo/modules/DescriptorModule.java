@@ -70,7 +70,13 @@ public class DescriptorModule extends LadeiraModule implements Listener {
 							
 							if (block.getType().equals(Material.END_PORTAL)) {
 								online.eject();
-								online.teleport(((EndLockModule) Chromo.getModule(EndLockModule.class)).getEndLocation());
+								EndLockModule endLock = (EndLockModule) Chromo.getModule(EndLockModule.class);
+								if (endLock.isEndLocked()) {
+									online.sendMessage(ChatColor.GRAY + "The end is locked till " + ChatColor.WHITE + endLock.getEndUnlockText());
+								} else {
+									online.teleport(endLock.getEndLocation());
+									online.sendMessage(ChatColor.GRAY + "Teleporting to the end");
+								}
 							}
 						}
 
